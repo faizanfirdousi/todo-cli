@@ -15,20 +15,27 @@ type Todo struct {
 
 type Todos []Todo
 
-func (todos *Todos) add(title string) {
+func (todos *Todos) add(title string) error {
+	if title == "" {
+		err := errors.New("Title cannot be empty")
+		fmt.Println(err)
+		return err
+	}
+
 	todo := Todo{
 		Title:       title,
 		Completed:   false,
-		CompletedAt: nil,
 		CreatedAt:   time.Now(),
+		CompletedAt: nil,
 	}
 
 	*todos = append(*todos, todo)
+	return nil
 }
 
 func (todos *Todos) validateIndex(index int) error {
 	if index < 0 || index >= len(*todos) {
-		err := errors.New("Invalid index")
+		err := errors.New("invalid index")
 		fmt.Println(err)
 		return err
 	}
@@ -37,45 +44,38 @@ func (todos *Todos) validateIndex(index int) error {
 }
 
 func (todos *Todos) delete(index int) error {
-	t := *todos
-
-	if err := t.validateIndex(index); err != nil {
+	if err := todos.validateIndex(index); err != nil {
 		return err
 	}
 
-	*todos = append(t[:index], t[index+1:]...)
-
+	*todos = append((*todos)[:index], (*todos)[index+1:]...)
 	return nil
 }
 
 func (todos *Todos) toggle(index int) error {
-	t := *todos
-
-	if err := t.validateIndex(index); err != nil {
+	if err := todos.validateIndex(index); err != nil {
 		return err
 	}
 
-	isCompleted := t[index].Completed
+	todo := &(*todos)[index]
 
-	if !isCompleted {
+	if !todo.Completed {
 		completionTime := time.Now()
-		t[index].CompletedAt = &completionTime
-
+		todo.CompletedAt = &completionTime
+	} else {
+		todo.CompletedAt = nil
 	}
 
-	t[index].Completed = !isCompleted
+	todo.Completed = !todo.Completed
 
 	return nil
 }
 
 func (todos *Todos) edit(index int, title string) error {
-	t := *todos
-
-	if err := t.validateIndex(index); err != nil {
+	if err := todos.validateIndex(index); err != nil {
 		return err
 	}
 
-	t[index].Title = title
-
+	(*todos)[index].Title = title
 	return nil
 }

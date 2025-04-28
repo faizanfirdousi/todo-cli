@@ -3,11 +3,13 @@ package main
 import "fmt"
 
 func main() {
-	todos := Todos{}
-	todos.add("Buy milk")
-	todos.add("Buy gocercies")
-	todos.add("Buy Bread")
-	fmt.Printf("%v\n\n", todos)
-	todos.delete(0)
-	fmt.Printf("%v\n\n", todos)
+	mytodos := Todos{}
+
+	mytodos.add("buy groceries")
+	mytodos.add("do homework")
+	fmt.Println(mytodos)
+	mytodos.delete(1)
+	fmt.Println()
+	mytodos.toggle(0)
+	fmt.Println(mytodos)
 }
